@@ -1,30 +1,62 @@
 import 'package:flutter/material.dart';
 
-class CompteScreen extends StatefulWidget {
-  const CompteScreen({super.key});
+class PasswordScreen extends StatefulWidget {
+  const PasswordScreen({super.key});
 
   @override
-  State<CompteScreen> createState() => _CompteScreenState();
+  State<PasswordScreen> createState() => _PasswordScreenState();
 }
 
-class _CompteScreenState extends State<CompteScreen> {
+class _PasswordScreenState extends State<PasswordScreen> {
   final emailController = TextEditingController();
-  final passwordController = TextEditingController();
   bool isLoading = false;
+  bool hasUserTyped =
+      false; // Nouvelle variable pour suivre si l'utilisateur a tapé
 
-  void createAccount() async {
+  @override
+  void initState() {
+    super.initState();
+    emailController.addListener(() {
+      setState(() {
+        hasUserTyped = emailController.text.isNotEmpty; // Mise à jour de l'état
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    super.dispose();
+  }
+
+  bool isEmailValid(String email) {
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    return emailRegex.hasMatch(email);
+  }
+
+  void resetPassword() async {
+    final email = emailController.text.trim();
+
+    if (!isEmailValid(email)) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Adresse e-mail invalide")));
+      return;
+    }
+
     setState(() => isLoading = true);
     await Future.delayed(const Duration(seconds: 2));
     setState(() => isLoading = false);
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Compte créé avec succès !')));
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Lien de réinitialisation envoyé !')),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Créer un compte')),
+      appBar: AppBar(title: const Text('Réinitialiser le mot de passe')),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -32,11 +64,22 @@ class _CompteScreenState extends State<CompteScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(
-                Icons.person_add,
+                Icons.lock_reset,
                 size: 60,
                 color: Color.fromARGB(255, 24, 1, 138),
               ),
               const SizedBox(height: 24),
+              const Text(
+                'Mot de passe oublié ?',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Entrez votre adresse e-mail pour recevoir un lien de réinitialisation.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.black54),
+              ),
+              const SizedBox(height: 28),
               TextField(
                 controller: emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -47,31 +90,26 @@ class _CompteScreenState extends State<CompteScreen> {
                     borderRadius: BorderRadius.circular(14),
                   ),
                   filled: true,
-                  fillColor: Colors.blue[50],
+                  fillColor: const Color.fromARGB(255, 169, 211, 240),
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Mot de passe',
-                  prefixIcon: const Icon(Icons.lock_outline),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  filled: true,
-                  fillColor: Colors.blue[50],
-                ),
+                onChanged: (value) {
+                  setState(
+                    () {},
+                  ); // Force le rebuild pour mettre à jour le bouton
+                },
               ),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: isLoading ? null : createAccount,
+                  onPressed: (emailController.text.isEmpty || isLoading)
+                      ? null
+                      : resetPassword,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 24, 1, 138),
+                    backgroundColor: (emailController.text.isEmpty || isLoading)
+                        ? Colors.grey
+                        : const Color.fromARGB(255, 24, 1, 138),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
@@ -86,7 +124,7 @@ class _CompteScreenState extends State<CompteScreen> {
                           ),
                         )
                       : const Text(
-                          'Créer un compte',
+                          'Envoyer',
                           style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
                 ),

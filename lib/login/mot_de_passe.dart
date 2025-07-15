@@ -11,10 +11,37 @@ class _PasswordScreenState extends State<PasswordScreen> {
   final emailController = TextEditingController();
   bool isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    emailController.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    super.dispose();
+  }
+
+  bool isEmailValid(String email) {
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    return emailRegex.hasMatch(email);
+  }
+
   void resetPassword() async {
+    final email = emailController.text.trim();
+
+    if (!isEmailValid(email)) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Adresse e-mail invalide")));
+      return;
+    }
+
     setState(() => isLoading = true);
     await Future.delayed(const Duration(seconds: 2));
     setState(() => isLoading = false);
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Lien de réinitialisation envoyé !')),
     );
@@ -65,9 +92,13 @@ class _PasswordScreenState extends State<PasswordScreen> {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: isLoading ? null : resetPassword,
+                  onPressed: emailController.text.isEmpty || isLoading
+                      ? null
+                      : resetPassword,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 24, 1, 138),
+                    backgroundColor: emailController.text.isEmpty
+                        ? Colors.grey
+                        : const Color.fromARGB(255, 24, 1, 138),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),

@@ -1,5 +1,3 @@
-// ignore_for_file: unused_local_variable
-
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -15,14 +13,33 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isPasswordVisible = false;
   bool isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    emailController.addListener(() => setState(() {}));
+    passwordController.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   void loginUser() async {
     setState(() => isLoading = true);
     await Future.delayed(const Duration(seconds: 2));
     setState(() => isLoading = false);
-    // Logique de connexion ici (appel API)
+    Navigator.pushReplacementNamed(context, '/tableau_de_bord');
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('Connexion simulée !')));
+  }
+
+  bool get isFormValid {
+    return emailController.text.isNotEmpty &&
+        passwordController.text.isNotEmpty;
   }
 
   @override
@@ -35,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Container(
             padding: const EdgeInsets.all(28),
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 255, 255, 255),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
@@ -51,17 +68,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 CircleAvatar(
                   radius: 40,
                   backgroundColor: Colors.blue[100],
-                  child: ClipOval(
-                    clipBehavior: Clip.antiAlias,
-                    child: Image.asset(
-                      'assets/video_image/padlock.png',
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
-                    ),
+                  child: const Icon(
+                    Icons.lock_outline,
+                    size: 48,
+                    color: Colors.blue,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
                 const Text(
                   'Bienvenue',
                   style: TextStyle(
@@ -136,9 +149,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: double.infinity,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: isLoading ? null : loginUser,
+                    onPressed: (isLoading || !isFormValid) ? null : loginUser,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 24, 1, 138),
+                      backgroundColor: isFormValid
+                          ? const Color.fromARGB(255, 24, 1, 138)
+                          : Colors.grey[400],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
