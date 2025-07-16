@@ -1,133 +1,217 @@
 import 'package:flutter/material.dart';
+import 'login.dart';
 
-class PasswordScreen extends StatefulWidget {
-  const PasswordScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<PasswordScreen> createState() => _PasswordScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _PasswordScreenState extends State<PasswordScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
   final emailController = TextEditingController();
-  bool isLoading = false;
-  bool hasUserTyped =
-      false; // Nouvelle variable pour suivre si l'utilisateur a tapé
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    emailController.addListener(() {
-      setState(() {
-        hasUserTyped = emailController.text.isNotEmpty; // Mise à jour de l'état
-      });
-    });
-  }
+  bool isPasswordVisible = false;
+  bool isConfirmVisible = false;
+  bool isLoading = false;
 
   @override
   void dispose() {
+    firstNameController.dispose();
+    lastNameController.dispose();
     emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
     super.dispose();
   }
 
-  bool isEmailValid(String email) {
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    return emailRegex.hasMatch(email);
+  String? _validateName(String? value) {
+    if (value == null || value.trim().isEmpty) return 'Champ obligatoire';
+    if (value.length < 2) return 'Trop court';
+    return null;
   }
 
-  void resetPassword() async {
-    final email = emailController.text.trim();
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) return 'Veuillez entrer un email';
+    final regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!regex.hasMatch(value)) return 'Email invalide';
+    return null;
+  }
 
-    if (!isEmailValid(email)) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Adresse e-mail invalide")));
-      return;
-    }
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty)
+      return 'Veuillez entrer un mot de passe';
+    if (value.length < 8) return 'Minimum 8 caractères';
+    if (!RegExp(r'[A-Z]').hasMatch(value)) return 'Au moins une majuscule';
+    if (!RegExp(r'[0-9]').hasMatch(value)) return 'Au moins un chiffre';
+    return null;
+  }
+
+  String? _validateConfirmPassword(String? value) {
+    if (value != passwordController.text)
+      return 'Les mots de passe ne correspondent pas';
+    return null;
+  }
+
+  void _registerUser() async {
+    if (!_formKey.currentState!.validate()) return;
 
     setState(() => isLoading = true);
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2)); // Simulation
+
     setState(() => isLoading = false);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Lien de réinitialisation envoyé !')),
+    // Retour à la page de login
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Réinitialiser le mot de passe')),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
+      appBar: AppBar(
+        title: const Text("Créer un compte"),
+        backgroundColor: const Color.fromARGB(255, 24, 1, 138),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Form(
+          key: _formKey,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.lock_reset,
-                size: 60,
-                color: Color.fromARGB(255, 24, 1, 138),
+              const Text(
+                "Inscription",
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 24),
-              const Text(
-                'Mot de passe oublié ?',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'Entrez votre adresse e-mail pour recevoir un lien de réinitialisation.',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.black54),
-              ),
-              const SizedBox(height: 28),
-              TextField(
-                controller: emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  labelText: 'Adresse e-mail',
-                  prefixIcon: const Icon(Icons.email_outlined),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  filled: true,
-                  fillColor: const Color.fromARGB(255, 169, 211, 240),
+
+              // Prénom
+              TextFormField(
+                controller: firstNameController,
+                decoration: const InputDecoration(
+                  labelText: "Prénom",
+                  prefixIcon: Icon(Icons.person),
                 ),
-                onChanged: (value) {
-                  setState(
-                    () {},
-                  ); // Force le rebuild pour mettre à jour le bouton
-                },
+                validator: _validateName,
+              ),
+              const SizedBox(height: 16),
+
+              // Nom
+              TextFormField(
+                controller: lastNameController,
+                decoration: const InputDecoration(
+                  labelText: "Nom",
+                  prefixIcon: Icon(Icons.person_outline),
+                ),
+                validator: _validateName,
+              ),
+              const SizedBox(height: 16),
+
+              // Email
+              TextFormField(
+                controller: emailController,
+                decoration: const InputDecoration(
+                  labelText: "Adresse e-mail",
+                  prefixIcon: Icon(Icons.email),
+                ),
+                keyboardType: TextInputType.emailAddress,
+                validator: _validateEmail,
+              ),
+              const SizedBox(height: 16),
+
+              // Mot de passe
+              TextFormField(
+                controller: passwordController,
+                obscureText: !isPasswordVisible,
+                decoration: InputDecoration(
+                  labelText: "Mot de passe",
+                  prefixIcon: const Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      isPasswordVisible
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                    ),
+                    onPressed: () {
+                      setState(() => isPasswordVisible = !isPasswordVisible);
+                    },
+                  ),
+                ),
+                validator: _validatePassword,
+              ),
+              const SizedBox(height: 16),
+
+              // Confirmation
+              TextFormField(
+                controller: confirmPasswordController,
+                obscureText: !isConfirmVisible,
+                decoration: InputDecoration(
+                  labelText: "Confirmer le mot de passe",
+                  prefixIcon: const Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      isConfirmVisible
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                    ),
+                    onPressed: () {
+                      setState(() => isConfirmVisible = !isConfirmVisible);
+                    },
+                  ),
+                ),
+                validator: _validateConfirmPassword,
               ),
               const SizedBox(height: 24),
+
+              // Bouton s'inscrire
               SizedBox(
                 width: double.infinity,
-                height: 48,
+                height: 50,
                 child: ElevatedButton(
-                  onPressed: (emailController.text.isEmpty || isLoading)
-                      ? null
-                      : resetPassword,
+                  onPressed: isLoading ? null : _registerUser,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: (emailController.text.isEmpty || isLoading)
-                        ? Colors.grey
-                        : const Color.fromARGB(255, 24, 1, 138),
+                    backgroundColor: const Color.fromARGB(255, 24, 1, 138),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   child: isLoading
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
+                      ? const CircularProgressIndicator(color: Colors.white)
                       : const Text(
-                          'Envoyer',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                          "S'inscrire",
+                          style: TextStyle(color: Colors.white, fontSize: 18),
                         ),
                 ),
+              ),
+              const SizedBox(height: 18),
+
+              // Lien vers login
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Déjà inscrit ?"),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginScreen(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      "Se connecter",
+                      style: TextStyle(color: Color.fromARGB(255, 24, 1, 138)),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// Tu dois créer ce fichier avec l’interface du tableau de bord
 
 class PasswordScreen extends StatefulWidget {
   const PasswordScreen({super.key});
