@@ -9,7 +9,7 @@ class CreateDevisScreen extends StatefulWidget {
 
 class _CreateDevisScreenState extends State<CreateDevisScreen> {
   String selectedClient = "";
-  List<String> clients = ["Josias", "Sarah", "Daniel"];
+  List<String> clients = ["Josias", "Joyce", "Malick"];
   List<Map<String, dynamic>> articles = [];
 
   final articleController = TextEditingController();
@@ -87,7 +87,7 @@ class _CreateDevisScreenState extends State<CreateDevisScreen> {
               ),
             ),
             Text(
-              "Total : $total €",
+              "Total : $total€",
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),

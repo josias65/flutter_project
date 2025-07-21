@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart';
+
+// Écrans login et tableau de bord
+import 'package:flutter_app_gestion/login/login.dart';
+import 'package:flutter_app_gestion/login/dashboard_screen.dart';
+
+// Clients
 import 'package:flutter_app_gestion/client/list_screen.dart';
+import 'package:flutter_app_gestion/client/detail_screen.dart';
+// ignore: unused_import
+import 'package:flutter_app_gestion/client/add_screen.dart';
+
+// Devis
+import 'package:flutter_app_gestion/devis/list.dart';
 import 'package:flutter_app_gestion/devis/create.dart';
 
-import 'package:flutter_app_gestion/devis/list.dart';
-import 'package:flutter_app_gestion/login/compte.dart';
-import 'package:flutter_app_gestion/login/login.dart';
+// Appels d’offres
 
-import 'package:flutter_app_gestion/login/dashboard_screen.dart';
-// ignore: unused_import
-// ignore: prefer_typing_uninitialized_variables
-import 'package:flutter_app_gestion/login/mot_de_passe.dart'; // Tu dois créer ce fichier avec l’interface du tableau de bord
-// Optionnel si tu gères l'inscription
+import 'package:flutter_app_gestion/appel_d\'offre/detail_app_screen.dart';
+import 'package:flutter_app_gestion/appel_d\'offre/app_screen.dart';
+
+// Routes
+import 'package:flutter_app_gestion/routes/app_routes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,15 +38,24 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const LoginScreen(),
-        '/mot_de_passe': (context) => const PasswordScreen(),
-        '/dashboard': (context) => const DashboardScreen(),
-        '/inscription': (context) => const RegisterScreen(),
-        '/clients': (context) => const ClientListScreen(),
+        AppRoutes.dashboard: (context) => const DashboardScreen(),
 
-        '/devis/creation': (context) => const CreateDevisScreen(),
-        '/devis': (context) => const DevisListScreen(),
+        // Clients
+        AppRoutes.clients: (context) => const ClientListScreen(),
+        '${AppRoutes.clients}/detail': (context) => const ClientDetailScreen(),
+        // ignore: equal_keys_in_map
+        AppRoutes.clients: (context) => const ClientListScreen(),
+        '${AppRoutes.clients}/add': (context) => const AddClientScreen(),
+        AppRoutes.addClient: (context) => const AddClientScreen(),
 
-        // si tu veux gérer la création de compte
+        // Appels d’offres
+        AppRoutes.appelsOffres: (context) => const AppelsOffresScreen(),
+        '${AppRoutes.appelsOffres}/detail': (context) =>
+            const DetailAppelOffreScreen(),
+
+        // Devis
+        AppRoutes.devis: (context) => const DevisListScreen(),
+        '${AppRoutes.devis}/creation': (context) => const CreateDevisScreen(),
       },
     );
   }

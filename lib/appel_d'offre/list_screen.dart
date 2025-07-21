@@ -1,3 +1,4 @@
+// TODO Implement this library.
 import 'package:flutter/material.dart';
 import '../../routes/app_routes.dart';
 
@@ -13,7 +14,7 @@ class _ClientListScreenState extends State<ClientListScreen> {
     {'nom': 'Jean KOLOMUANI', 'entreprise': 'BOURI SARL', 'statut': 'Actif'},
     {
       'nom': 'Malick MOSALITO',
-      'entreprise': 'motologui Industrie',
+      'entreprise': 'Motologui Industrie',
       'statut': 'Inactif',
     },
   ];
@@ -23,7 +24,7 @@ class _ClientListScreenState extends State<ClientListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var filteredClients = clients.where((client) {
+    final filteredClients = clients.where((client) {
       final nom = client['nom'].toString().toLowerCase();
       final statut = client['statut'];
       final matchSearch = nom.contains(search.toLowerCase());
@@ -38,8 +39,17 @@ class _ClientListScreenState extends State<ClientListScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: () {
-              // Ajouter un client (navigation ou modal)
+            onPressed: () async {
+              final nouveauClient = await Navigator.pushNamed(
+                context,
+                AppRoutes.addClient,
+              );
+
+              if (nouveauClient != null && mounted) {
+                setState(() {
+                  clients.add(nouveauClient as Map<String, dynamic>);
+                });
+              }
             },
           ),
         ],
@@ -69,11 +79,11 @@ class _ClientListScreenState extends State<ClientListScreen> {
               decoration: const InputDecoration(
                 labelText: "Filtrer par statut",
               ),
-              items: [
-                'Tous',
-                'Actif',
-                'Inactif',
-              ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+              items: const [
+                DropdownMenuItem(value: 'Tous', child: Text('Tous')),
+                DropdownMenuItem(value: 'Actif', child: Text('Actif')),
+                DropdownMenuItem(value: 'Inactif', child: Text('Inactif')),
+              ],
               onChanged: (value) =>
                   setState(() => selectedStatut = value ?? 'Tous'),
             ),
@@ -104,7 +114,6 @@ class _ClientListScreenState extends State<ClientListScreen> {
                       Navigator.pushNamed(
                         context,
                         AppRoutes.clientDetail,
-
                         arguments: client,
                       );
                     },

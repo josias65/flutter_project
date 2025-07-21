@@ -35,7 +35,13 @@ class DashboardScreen extends StatelessWidget {
         "Recouvrements",
         Icons.history_toggle_off_outlined,
         const Color(0xFF9C27B0),
-        AppRoutes.relances,
+        AppRoutes.recouvrements,
+      ),
+      _DashboardItem(
+        "Appels d’offres",
+        Icons.assignment_outlined,
+        const Color(0xFF4CAF50),
+        AppRoutes.appelsOffres,
       ),
       _DashboardItem(
         "Profil",
@@ -57,58 +63,49 @@ class DashboardScreen extends StatelessWidget {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 15, 4, 101),
-              ),
-              child: const Text(
+            const DrawerHeader(
+              decoration: BoxDecoration(color: Color.fromARGB(255, 15, 4, 101)),
+              child: Text(
                 'Menu',
                 style: TextStyle(color: Colors.white, fontSize: 24),
               ),
             ),
-            ListTile(
-              leading: const Icon(Icons.dashboard),
-              title: const Text('Tableau de Bord'),
-              onTap: () {
-                Navigator.pop(context); // Reste sur le dashboard
-              },
+            _buildDrawerItem(
+              Icons.dashboard,
+              'Tableau de Bord',
+              context,
+              AppRoutes.dashboard,
             ),
-            ListTile(
-              leading: const Icon(Icons.people),
-              title: const Text('Clients'),
-              onTap: () {
-                Navigator.pushNamed(context, AppRoutes.clients);
-              },
+            _buildDrawerItem(
+              Icons.people,
+              'Clients',
+              context,
+              AppRoutes.clients,
             ),
-            ListTile(
-              leading: const Icon(Icons.description),
-              title: const Text('Devis'),
-              onTap: () {
-                Navigator.pushNamed(context, AppRoutes.devis);
-              },
+            _buildDrawerItem(
+              Icons.description,
+              'Devis',
+              context,
+              AppRoutes.devis,
             ),
-            ListTile(
-              leading: const Icon(Icons.inventory),
-              title: const Text('Stocks'),
-              onTap: () {
-                Navigator.pushNamed(context, AppRoutes.stock);
-              },
+            _buildDrawerItem(
+              Icons.inventory,
+              'Stocks',
+              context,
+              AppRoutes.stock,
             ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Paramètres'),
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  '/settings',
-                ); // À créer si nécessaire
-              },
+            _buildDrawerItem(
+              Icons.assignment,
+              'Appels d’offres',
+              context,
+              AppRoutes.appelsOffres,
             ),
+            _buildDrawerItem(Icons.person, 'Profil', context, AppRoutes.profil),
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Déconnexion'),
               onTap: () {
-                // Logique de déconnexion à ajouter ici
+                // TODO: Ajoute ici ta logique de déconnexion
               },
             ),
           ],
@@ -129,6 +126,9 @@ class DashboardScreen extends StatelessWidget {
         selectedItemColor: const Color(0xFF6A5AE0),
         unselectedItemColor: Colors.grey,
         currentIndex: 0,
+        onTap: (index) {
+          // TODO: Implémente la navigation si nécessaire
+        },
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard),
@@ -141,6 +141,19 @@ class DashboardScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildDrawerItem(
+    IconData icon,
+    String title,
+    BuildContext context,
+    String route,
+  ) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      onTap: () => Navigator.pushNamed(context, route),
     );
   }
 

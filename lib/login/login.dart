@@ -4,9 +4,9 @@ import 'dashboard_screen.dart';
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
-  // Identifiants par défaut
   static const String defaultEmail = "admin@neo.com";
   static const String defaultPassword = "admin123";
+
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
@@ -33,14 +33,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _loginUser() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
 
     setState(() => isLoading = true);
-
     await Future.delayed(const Duration(seconds: 2));
-
     setState(() => isLoading = false);
 
     Navigator.pushReplacement(
@@ -186,12 +182,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Navigator.pushNamed(context, '/mot_de_passe');
                         }
                       },
-                      child: const Text(
-                        'Mot de passe oublié ?',
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 24, 1, 138),
-                        ),
-                      ),
+                      child: const Text('', style: TextStyle()),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -221,31 +212,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             )
                           : const Text(
-                              'Se connecter',
+                              'Connexion',
                               style: TextStyle(
-                                fontSize: 18,
                                 color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                     ),
-                  ),
-                  const SizedBox(height: 18),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("Pas de compte ?"),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/inscription');
-                        },
-                        child: const Text(
-                          "Créer un compte",
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 24, 1, 138),
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
                 ],
               ),
