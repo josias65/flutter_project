@@ -44,6 +44,12 @@ class DashboardScreen extends StatelessWidget {
         AppRoutes.appelsOffres,
       ),
       _DashboardItem(
+        "Marché",
+        Icons.shopping_bag_outlined,
+        const Color(0xFF795548),
+        AppRoutes.marcheList,
+      ),
+      _DashboardItem(
         "Profil",
         Icons.person_outline,
         const Color(0xFF3F51B5),
@@ -81,6 +87,12 @@ class DashboardScreen extends StatelessWidget {
               'Clients',
               context,
               AppRoutes.clients,
+            ),
+            _buildDrawerItem(
+              Icons.shopping_bag_outlined,
+              'Marché',
+              context,
+              AppRoutes.marcheList,
             ),
             _buildDrawerItem(
               Icons.description,
@@ -127,7 +139,7 @@ class DashboardScreen extends StatelessWidget {
         unselectedItemColor: Colors.grey,
         currentIndex: 0,
         onTap: (index) {
-          // TODO: Implémente la navigation si nécessaire
+          // TODO: Implémente la navigation entre onglets si besoin
         },
         items: const [
           BottomNavigationBarItem(
@@ -153,7 +165,10 @@ class DashboardScreen extends StatelessWidget {
     return ListTile(
       leading: Icon(icon),
       title: Text(title),
-      onTap: () => Navigator.pushNamed(context, route),
+      onTap: () {
+        Navigator.pop(context); // ferme le drawer avant navigation
+        Navigator.pushReplacementNamed(context, route);
+      },
     );
   }
 

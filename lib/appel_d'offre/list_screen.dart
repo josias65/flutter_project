@@ -1,4 +1,3 @@
-// TODO Implement this library.
 import 'package:flutter/material.dart';
 import '../../routes/app_routes.dart';
 
@@ -39,6 +38,7 @@ class _ClientListScreenState extends State<ClientListScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
+            tooltip: 'Ajouter un client',
             onPressed: () async {
               final nouveauClient = await Navigator.pushNamed(
                 context,
@@ -64,7 +64,7 @@ class _ClientListScreenState extends State<ClientListScreen> {
                 prefixIcon: const Icon(Icons.search),
                 hintText: "Rechercher un client...",
                 filled: true,
-                fillColor: Colors.grey[200],
+                fillColor: Colors.grey.shade200,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
@@ -90,37 +90,56 @@ class _ClientListScreenState extends State<ClientListScreen> {
           ),
           const SizedBox(height: 12),
           Expanded(
-            child: ListView.builder(
-              itemCount: filteredClients.length,
-              itemBuilder: (context, index) {
-                final client = filteredClients[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  child: ListTile(
-                    title: Text(client['nom']),
-                    subtitle: Text(client['entreprise']),
-                    trailing: Text(
-                      client['statut'],
-                      style: TextStyle(
-                        color: client['statut'] == 'Actif'
-                            ? Colors.green
-                            : Colors.red,
-                      ),
+            child: filteredClients.isEmpty
+                ? const Center(
+                    child: Text(
+                      'Aucun client trouvé',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        AppRoutes.clientDetail,
-                        arguments: client,
+                  )
+                : ListView.builder(
+                    itemCount: filteredClients.length,
+                    itemBuilder: (context, index) {
+                      final client = filteredClients[index];
+                      final isActive = client['statut'] == 'Actif';
+                      return Card(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          side: BorderSide(
+                            color: isActive
+                                ? Colors.green.shade300
+                                : Colors.red.shade300,
+                            width: 1,
+                          ),
+                        ),
+                        child: ListTile(
+                          title: Text(
+                            client['nom'],
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          subtitle: Text(client['entreprise']),
+                          trailing: Text(
+                            client['statut'],
+                            style: TextStyle(
+                              color: isActive ? Colors.green : Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.clientDetail,
+                              arguments: client,
+                            );
+                          },
+                        ),
                       );
                     },
                   ),
-                );
-              },
-            ),
           ),
         ],
       ),

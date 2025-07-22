@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
 class ClientDetailScreen extends StatelessWidget {
-  const ClientDetailScreen({super.key});
+  final Map<String, dynamic> client;
+
+  const ClientDetailScreen({super.key, required this.client});
 
   @override
   Widget build(BuildContext context) {
-    final client =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -41,7 +40,7 @@ class ClientDetailScreen extends StatelessWidget {
                   icon: const Icon(Icons.description),
                   label: const Text("Créer un devis"),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
+                    backgroundColor: const Color.fromARGB(255, 59, 65, 252),
                   ),
                 ),
               ),
@@ -53,7 +52,9 @@ class ClientDetailScreen extends StatelessWidget {
                   },
                   icon: const Icon(Icons.message),
                   label: const Text("Message"),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 136, 217, 240),
+                  ),
                 ),
               ),
             ],

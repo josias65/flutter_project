@@ -31,24 +31,69 @@ class DevisListScreen extends StatelessWidget {
       ),
     ];
 
+    Color statusColor(String status) {
+      switch (status.toLowerCase()) {
+        case 'accepté':
+          return Colors.green;
+        case 'refusé':
+          return Colors.red;
+        case 'en attente':
+          return Colors.orange;
+        default:
+          return Colors.grey;
+      }
+    }
+
     return Scaffold(
-      appBar: AppBar(title: const Text("Liste des Devis")),
+      appBar: AppBar(
+        title: const Text("Liste des Devis"),
+        backgroundColor: const Color(0xFF3F1FBF),
+      ),
       body: ListView.builder(
         itemCount: devisList.length,
         itemBuilder: (context, index) {
           final devis = devisList[index];
-          return ListTile(
-            leading: const Icon(Icons.description),
-            title: Text(devis.reference),
-            subtitle: Text("${devis.client} - ${devis.date}"),
-            trailing: Text(devis.status),
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                AppRoutes.devisDetail,
-                arguments: devis,
-              );
-            },
+          return Card(
+            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: ListTile(
+              leading: const Icon(
+                Icons.description_outlined,
+                color: Color(0xFF3F1FBF),
+              ),
+              title: Text(
+                devis.reference,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text("${devis.client} • ${devis.date}"),
+              trailing: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    devis.status,
+                    style: TextStyle(
+                      color: statusColor(devis.status),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "${devis.total.toStringAsFixed(2)} €",
+                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                  ),
+                ],
+              ),
+              // 👉 Navigation vers la page de détail :
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  AppRoutes.devisDetail,
+                  arguments: devis, // <- C'est un objet DevisModel
+                );
+              },
+            ),
           );
         },
       ),
@@ -56,6 +101,7 @@ class DevisListScreen extends StatelessWidget {
         onPressed: () => Navigator.pushNamed(context, AppRoutes.createDevis),
         icon: const Icon(Icons.add),
         label: const Text("Créer un devis"),
+        backgroundColor: const Color(0xFF3F1FBF),
       ),
     );
   }

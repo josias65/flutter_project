@@ -9,7 +9,10 @@ class DevisDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Devis ${devis.reference}")),
+      appBar: AppBar(
+        title: Text("Devis ${devis.reference}"),
+        backgroundColor: const Color(0xFF3F1FBF),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -17,30 +20,68 @@ class DevisDetailScreen extends StatelessWidget {
           children: [
             Text(
               "Client : ${devis.client}",
-              style: const TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
-            Text("Date : ${devis.date}"),
-            Text("Statut : ${devis.status}"),
-            const SizedBox(height: 20),
+            const SizedBox(height: 8),
+            Text("Date : ${devis.date}", style: const TextStyle(fontSize: 16)),
+            const SizedBox(height: 4),
+            Text(
+              "Statut : ${devis.status}",
+              style: TextStyle(
+                fontSize: 16,
+                color: devis.status.toLowerCase() == 'validé'
+                    ? Colors.green
+                    : (devis.status.toLowerCase() == 'refusé'
+                          ? Colors.red
+                          : Colors.orange),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 24),
             const Text(
               "Document PDF (exemple fictif)",
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const Expanded(
-              child: Center(child: Icon(Icons.picture_as_pdf, size: 100)),
+            const SizedBox(height: 20),
+            Expanded(
+              child: Center(
+                child: Icon(
+                  Icons.picture_as_pdf,
+                  size: 120,
+                  color: Colors.grey[400],
+                ),
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    // TODO: Implémenter le téléchargement
+                  },
                   icon: const Icon(Icons.download),
                   label: const Text("Télécharger"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF3F1FBF),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
+                  ),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    // TODO: Implémenter le partage
+                  },
                   icon: const Icon(Icons.share),
                   label: const Text("Partager"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF3F1FBF),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
+                  ),
                 ),
               ],
             ),

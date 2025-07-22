@@ -15,13 +15,11 @@ class _AddClientScreenState extends State<AddClientScreen> {
 
   void _saveClient() {
     if (_formKey.currentState!.validate()) {
-      final nouveauClient = {
+      Navigator.pop(context, {
         'nom': nomController.text,
         'entreprise': entrepriseController.text,
         'statut': statut,
-      };
-
-      Navigator.pop(context, nouveauClient); // On retourne le client
+      }); // On retourne le client
     }
   }
 
